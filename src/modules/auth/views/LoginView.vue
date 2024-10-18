@@ -1,21 +1,23 @@
 <template>
   <h1 class="text-2xl font-semibold mb-4">Login</h1>
-  <form action="#" method="POST">
+  <form @submit.prevent="onLogin">
     <!-- Username Input -->
     <div class="mb-4">
-      <label for="username" class="block text-gray-600">Username</label>
+      <label for="username" class="block text-gray-600">Correo</label>
       <input
+        v-model="myForm.email"
         type="text"
-        id="username"
-        name="username"
+        id="email"
+        name="email"
         class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
         autocomplete="off"
       />
     </div>
     <!-- Password Input -->
     <div class="mb-4">
-      <label for="password" class="block text-gray-600">Password</label>
+      <label for="password" class="block text-gray-600">Contraseña</label>
       <input
+        v-model="myForm.password"
         type="password"
         id="password"
         name="password"
@@ -25,12 +27,18 @@
     </div>
     <!-- Remember Me Checkbox -->
     <div class="mb-4 flex items-center">
-      <input type="checkbox" id="remember" name="remember" class="text-blue-500" />
-      <label for="remember" class="text-gray-600 ml-2">Remember Me</label>
+      <input
+        v-model="myForm.rememberMe"
+        type="checkbox"
+        id="remember"
+        name="remember"
+        class="text-blue-500"
+      />
+      <label for="remember" class="text-gray-600 ml-2">Recordar usuario</label>
     </div>
     <!-- Forgot Password Link -->
     <div class="mb-6 text-blue-500">
-      <a href="#" class="hover:underline">Forgot Password?</a>
+      <a href="#" class="hover:underline">¿Olvidaste la contraseña?</a>
     </div>
     <!-- Login Button -->
     <button
@@ -43,23 +51,28 @@
   </form>
   <!-- Sign up  Link -->
   <div class="mt-6 text-blue-500 text-center">
-    <RouterLink :to="{ name: 'register' }" class="hover:underline">Sign up Here</RouterLink>
+    <RouterLink :to="{ name: 'register' }" class="hover:underline"
+      >Sign up Here</RouterLink
+    >
   </div>
 </template>
 
 <script lang="ts" setup>
+import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth.store';
 
 const router = useRouter();
 
-const onLogin = () => {
-  localStorage.setItem('userId', 'ABC-123');
+const authStore = useAuthStore();
+const myForm = reactive({
+  email: '',
+  password: '',
+  rememberMe: false,
+});
 
-  const lastPath = localStorage.getItem('lastPath') ?? '/';
-
-  // router.replace({
-  //   // name: 'home',
-  // });
-  router.replace(lastPath);
+const onLogin = async () => {
+  const ok = await authStore.login(myForm.email, myForm.password);
+  console.log({ ok });
 };
 </script>
