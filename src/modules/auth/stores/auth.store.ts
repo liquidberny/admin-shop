@@ -76,6 +76,7 @@ export const useAuthStore = defineStore('counter', () => {
       token.value = statusResp.token;
       return true;
     } catch (error) {
+      console.log(error);
       logout();
       return false;
     }
@@ -93,10 +94,12 @@ export const useAuthStore = defineStore('counter', () => {
       () => authStatus.value === AuthStatus.Authenticated,
     ),
 
+    isAdmin: computed(() => user.value?.roles.includes('admin') ?? false),
     username: computed(() => user.value?.fullName),
 
     //Actions
     login,
     register,
+    logout,
   };
 });
