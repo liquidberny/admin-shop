@@ -1,21 +1,22 @@
-import { tesloApi } from '@/api/tesloApi';
-import type { Product } from './interfaces/product.interface';
-import { getProductImageAction } from './get-product-image.action';
+import { dummyApi } from '@/api/dummyApi';
+import type { Product } from './interfaces/productDummy.interface';
+
 
 export const getProductsAction = async (
   page: number = 1,
-  limit: number = 10,
+  limit: number = 10
 ) => {
   try {
-    const { data } = await tesloApi.get<Product[]>(
-      `/products?limit=${limit}&offset=${page * limit}`,
+    // Calcular el valor de `skip` basado en la página actual
+    const skip = (page - 1) * limit;
+    const { data } = await dummyApi.get<{ products: Product[] }>(
+      `/products?limit=${limit}&skip=${skip}`
     );
-    return data.map(product => ({
-      ...product,
-      images: product.images.map(getProductImageAction),
-    }));
+    
+    return data.products;
   } catch (error) {
-    console.log(error);
-    throw new Error('Error getting products');
+    console.error('Error obteniendo productos:', error);
+    throw new Error('Error obteniendo productos');
   }
 };
+
