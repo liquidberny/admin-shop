@@ -2,6 +2,7 @@
 import { defineEmits, ref, reactive } from 'vue';
 import { onClickOutside } from '@vueuse/core';
 import { useToast } from 'vue-toastification';
+import addProductAction from '@/modules/products/actions'; 
 
 const toast = useToast();
 const nameInputRef = ref<HTMLInputElement | null>(null);
@@ -25,6 +26,23 @@ const emit = defineEmits(['modal-close']);
 
 const target = ref(null);
 onClickOutside(target, () => emit('modal-close'));
+
+// Función para manejar el envío del formulario
+async function handleSubmit() {
+  try {
+    await addProductAction({
+      title: myForm.name,
+      price: myForm.price,
+      category: myForm.category,
+      description: myForm.description,
+    });
+    toast.success('Producto agregado exitosamente');
+    emit('modal-close'); // Cierra el modal
+  } catch (error) {
+    toast.error('Hubo un error al agregar el producto');
+    console.error(error);
+  }
+}
 </script>
 
 <template>
@@ -35,7 +53,6 @@ onClickOutside(target, () => emit('modal-close'));
           <slot name="header"> Nuevo producto </slot>
         </div>
         <div class="modal-body">
-          
             <div class="mb-4">
               <label for="name" class="block text-gray-600">Nombre</label>
               <input
@@ -48,9 +65,8 @@ onClickOutside(target, () => emit('modal-close'));
                 autocomplete="off"
               />
             </div>
-    
             <div class="mb-4">
-              <label for="price" class="block text-gray-600">Percio</label>
+              <label for="price" class="block text-gray-600">Precio</label>
               <input
                 v-model="myForm.price"
                 ref="priceInputRef"
@@ -89,11 +105,10 @@ onClickOutside(target, () => emit('modal-close'));
         <div class="modal-footer">
           <slot name="footer">
             <div>
-              <button @click.stop="emit('modal-close')">Submit</button>
+              <button @click="handleSubmit">Submit</button>
             </div>
           </slot>
         </div>
-
       </div>
     </div>
   </div>

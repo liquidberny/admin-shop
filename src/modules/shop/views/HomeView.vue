@@ -29,7 +29,7 @@
     </button>
     
   </div>
-  <NewProductModal :isOpen="isModalOpened" @modal-close="closeModal" @submit="submitHandler" name="first-modal">
+  <NewProductModal :isOpen="isModalOpened" @modal-close="closeModal"  name="first-modal">
   </NewProductModal>
   <div v-if="!products" class="text-center h-[500px]">
     <h1 class="text-xl">Cargando productos</h1>
@@ -67,9 +67,6 @@ const closeModal = () => {
 };
 
 
-const submitHandler = ()=>{
-  //here you do whatever
-}
 const { data: products = [] } = useQuery({
   queryKey: ['products', { page: page }],
   queryFn: () => getProductsAction(page.value),
